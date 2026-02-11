@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Economist App Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E3120B;
+    --red-dark: #B80D08;
+    --ink: #1A1A1A;
+    --ink-light: #3D3D3D;
+    --warm-gray: #6B6357;
+    --sand: #F5F1EB;
+    --sand-dark: #E8E2D8;
+    --cream: #FAF8F4;
+    --white: #FFFFFF;
+    --slot-1: #E3120B;
+    --slot-2: #1B4F72;
+    --slot-3: #1E6B3A;
+    --slot-4: #8B5E3C;
+    --slot-5: #6C3483;
+    --slot-6: #CA6F1E;
+    --slot-7: #2C3E50;
+    --border: #D5CFC5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === HEADER === */
+  header {
+    background: var(--ink);
+    color: var(--white);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .header-brand h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+
+  .header-brand h1 span {
+    color: var(--red);
+  }
+
+  .header-badge {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    background: var(--red);
+    color: var(--white);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .header-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  .header-meta strong {
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* === MAIN CONTAINER === */
+  .container {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 32px 40px 80px;
+  }
+
+  /* === SECTION HEADERS === */
+  .section-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--red);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .section-header .section-count {
+    font-size: 13px;
+    color: var(--warm-gray);
+    font-weight: 400;
+  }
+
+  /* === CURRENT LINEUP TABLE === */
+  .current-table-wrap {
+    margin-bottom: 56px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .current-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .current-table thead th {
+    background: var(--sand);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--warm-gray);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .current-table tbody td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #EEEBE5;
+    vertical-align: middle;
+  }
+
+  .current-table tbody tr:last-child td { border-bottom: none; }
+
+  .current-table tbody tr {
+    transition: background 0.15s ease;
+  }
+  .current-table tbody tr:hover {
+    background: var(--sand);
+  }
+
+  .slot-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--white);
+  }
+
+  .slot-1 { background: var(--slot-1); }
+  .slot-2 { background: var(--slot-2); }
+  .slot-3 { background: var(--slot-3); }
+  .slot-4 { background: var(--slot-4); }
+  .slot-5 { background: var(--slot-5); }
+  .slot-6 { background: var(--slot-6); }
+  .slot-7 { background: var(--slot-7); }
+
+  .article-title {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+
+  .article-link {
+    display: block;
+    font-size: 11px;
+    color: var(--warm-gray);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 500px;
+  }
+
+  .section-cell {
+    font-size: 13px;
+    color: var(--warm-gray);
+    font-weight: 500;
+    white-space: nowrap;
+    text-transform: capitalize;
+  }
+
+  .time-pub {
+    font-size: 13px;
+    color: var(--ink-light);
+    white-space: nowrap;
+  }
+
+  .time-duration {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .time-duration.highlight {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  /* === PAST STORIES TABLE === */
+  .past-table-wrap {
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  .past-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+
+  .past-table thead th {
+    background: var(--sand);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--warm-gray);
+    padding: 10px 10px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .past-table thead th.slot-col {
+    text-align: center;
+    min-width: 72px;
+  }
+
+  .past-table thead th.slot-col .slot-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  .past-table tbody td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #EEEBE5;
+    vertical-align: middle;
+  }
+
+  .past-table tbody tr:last-child td { border-bottom: none; }
+
+  .past-table tbody tr {
+    transition: background 0.15s ease;
+  }
+  .past-table tbody tr:hover {
+    background: var(--sand);
+  }
+
+  .past-article-title {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .past-time-pub {
+    font-size: 12px;
+    color: var(--ink-light);
+    white-space: nowrap;
+  }
+
+  .past-slot-time {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-light);
+  }
+
+  .past-slot-time.empty {
+    color: #D5CFC5;
+  }
+
+  .past-total {
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 1100px) {
+    .container { padding: 24px 20px 60px; }
+    .header-top { padding: 14px 20px; }
+    .past-table-wrap { overflow-x: auto; }
+  }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--sand); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-brand">
+      <h1><span>The Economist</span> App Tracker</h1>
+      <span class="header-badge">Editorial Tool</span>
+    </div>
+    <div class="header-meta">
+      Last updated: <strong id="last-updated"></strong> &middot; <strong id="snapshot-count"></strong> snapshots &middot; <strong id="total-articles"></strong> articles tracked
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <!-- CURRENT LINE-UP -->
+  <div class="current-table-wrap">
+    <div class="section-header">
+      <h2>Current line-up</h2>
+      <span class="section-count">7 slots</span>
+    </div>
+    <table class="current-table">
+      <thead>
+        <tr>
+          <th style="width:50px">Slot</th>
+          <th>Article</th>
+          <th style="width:130px">Section</th>
+          <th style="width:155px">Date of publication</th>
+          <th style="width:120px">Time in slot</th>
+          <th style="width:130px">Time in line-up</th>
+        </tr>
+      </thead>
+      <tbody id="current-body"></tbody>
+    </table>
+  </div>
+
+  <!-- PAST STORIES -->
+  <div class="past-table-wrap">
+    <div class="section-header">
+      <h2>Past stories</h2>
+      <span class="section-count" id="past-count"></span>
+    </div>
+    <table class="past-table">
+      <thead>
+        <tr>
+          <th>Article</th>
+          <th style="width:130px">Section</th>
+          <th style="width:140px">Date of publication</th>
+          <th class="slot-col"><span class="slot-dot" style="background:var(--slot-1)"></span>Slot 1</th>
+          <th class="slot-col"><span class="slot-dot" style="background:var(--slot-2)"></span>Slot 2</th>
+          <th class="slot-col"><span class="slot-dot" style="background:var(--slot-3)"></span>Slot 3</th>
+          <th class="slot-col"><span class="slot-dot" style="background:var(--slot-4)"></span>Slot 4</th>
+          <th class="slot-col"><span class="slot-dot" style="background:var(--slot-5)"></span>Slot 5</th>
+          <th class="slot-col"><span class="slot-dot" style="background:var(--slot-6)"></span>Slot 6</th>
+          <th class="slot-col"><span class="slot-dot" style="background:var(--slot-7)"></span>Slot 7</th>
+          <th style="width:110px">Total time in line-up</th>
+        </tr>
+      </thead>
+      <tbody id="past-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// ─── RAW CSV DATA (embedded) ───
+const CSV_DATA = `CSVPLACEHOLDER`;
+
+// ─── PARSE CSV ───
+function parseCSV(raw) {
+  const rows = [];
+  const lines = raw.trim().split('\n');
+  // skip header
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].replace(/\r/g, '');
+    if (!line) continue;
+    // handle quoted fields
+    const fields = [];
+    let current = '';
+    let inQuotes = false;
+    for (let c = 0; c < line.length; c++) {
+      if (line[c] === '"') {
+        inQuotes = !inQuotes;
+      } else if (line[c] === ',' && !inQuotes) {
+        fields.push(current.trim());
+        current = '';
+      } else {
+        current += line[c];
+      }
+    }
+    fields.push(current.trim());
+    if (fields.length >= 5) {
+      rows.push({
+        datetime: fields[0],
+        article: fields[1],
+        hyperlink: fields[2],
+        code: fields[3],
+        slot: parseInt(fields[4])
+      });
+    }
+  }
+  return rows;
+}
+
+// ─── FORMAT HELPERS ───
+function formatDateFromHyperlink(hyperlink) {
+  // hyperlink like /leaders/2026/01/29/slug
+  const parts = hyperlink.split('/');
+  const year = parseInt(parts[2]);
+  const month = parseInt(parts[3]) - 1;
+  const day = parseInt(parts[4]);
+  const d = new Date(year, month, day);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const suffix = (day === 1 || day === 21 || day === 31) ? 'st' :
+                 (day === 2 || day === 22) ? 'nd' :
+                 (day === 3 || day === 23) ? 'rd' : 'th';
+  return `${months[d.getMonth()]} ${day}${suffix}, ${d.getFullYear()}`;
+}
+
+function extractSection(hyperlink) {
+  const parts = hyperlink.split('/');
+  const raw = parts[1] || '';
+  // Clean up: replace hyphens with spaces, title case
+  return raw.replace(/-/g, ' ').replace(/\band\b/g, '&')
+    .split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function formatDateFull(isoStr) {
+  const d = new Date(isoStr);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const day = d.getDate();
+  const suffix = (day === 1 || day === 21 || day === 31) ? 'st' :
+                 (day === 2 || day === 22) ? 'nd' :
+                 (day === 3 || day === 23) ? 'rd' : 'th';
+  const hours = String(d.getHours()).padStart(2, '0');
+  const mins = String(d.getMinutes()).padStart(2, '0');
+  return `${months[d.getMonth()]} ${day}${suffix}, ${d.getFullYear()} ${hours}:${mins}`;
+}
+
+function formatDuration(ms) {
+  if (ms <= 0) return null;
+  const totalMin = Math.floor(ms / 60000);
+  const days = Math.floor(totalMin / 1440);
+  const hours = Math.floor((totalMin % 1440) / 60);
+  const minutes = totalMin % 60;
+  if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
+
+function parseDT(s) { return new Date(s).getTime(); }
+
+// ─── COMPUTE TABLES ───
+function computeTables(rows) {
+  rows.sort((a, b) => a.datetime.localeCompare(b.datetime));
+
+  const snapshotTimes = [...new Set(rows.map(r => r.datetime))].sort();
+  const snapshots = {};
+  for (const r of rows) {
+    if (!snapshots[r.datetime]) snapshots[r.datetime] = [];
+    snapshots[r.datetime].push(r);
+  }
+
+  const latestTime = snapshotTimes[snapshotTimes.length - 1];
+  const currentLineup = snapshots[latestTime];
+  const currentCodes = new Set(currentLineup.map(r => r.code));
+
+  // Build article info
+  const articleInfo = {};
+  for (const t of snapshotTimes) {
+    for (const r of snapshots[t]) {
+      if (!articleInfo[r.code]) {
+        articleInfo[r.code] = {
+          article: r.article,
+          hyperlink: r.hyperlink,
+          firstSeen: t,
+          appearances: []
+        };
+      }
+      articleInfo[r.code].appearances.push({ time: t, slot: r.slot });
+    }
+  }
+
+  // Intervals
+  const intervals = [];
+  for (let i = 0; i < snapshotTimes.length - 1; i++) {
+    intervals.push([snapshotTimes[i], snapshotTimes[i + 1]]);
+  }
+
+  function calcTimes(code) {
+    const info = articleInfo[code];
+    const appDict = {};
+    for (const a of info.appearances) appDict[a.time] = a.slot;
+    const slotTimes = {};
+    let totalTime = 0;
+    for (const [start, end] of intervals) {
+      if (appDict[start] !== undefined) {
+        const slot = appDict[start];
+        const dur = parseDT(end) - parseDT(start);
+        slotTimes[slot] = (slotTimes[slot] || 0) + dur;
+        totalTime += dur;
+      }
+    }
+    return { slotTimes, totalTime };
+  }
+
+  // Current lineup data
+  const currentData = currentLineup
+    .sort((a, b) => a.slot - b.slot)
+    .map(r => {
+      const info = articleInfo[r.code];
+      const { slotTimes, totalTime } = calcTimes(r.code);
+      return {
+        slot: r.slot,
+        article: r.article,
+        hyperlink: r.hyperlink,
+        firstSeen: info.firstSeen,
+        timeInSlot: slotTimes[r.slot] || 0,
+        timeInLineup: totalTime
+      };
+    });
+
+  // Past stories
+  const pastCodes = Object.keys(articleInfo).filter(c => !currentCodes.has(c));
+  pastCodes.sort((a, b) => articleInfo[b].firstSeen.localeCompare(articleInfo[a].firstSeen));
+
+  const pastData = pastCodes.map(code => {
+    const info = articleInfo[code];
+    const { slotTimes, totalTime } = calcTimes(code);
+    return {
+      article: info.article,
+      hyperlink: info.hyperlink,
+      firstSeen: info.firstSeen,
+      slotTimes,
+      totalTime
+    };
+  });
+
+  return {
+    currentData,
+    pastData,
+    latestTime,
+    snapshotCount: snapshotTimes.length,
+    totalArticles: Object.keys(articleInfo).length
+  };
+}
+
+// ─── RENDER ───
+function render() {
+  const rows = parseCSV(CSV_DATA);
+  const { currentData, pastData, latestTime, snapshotCount, totalArticles } = computeTables(rows);
+
+  document.getElementById('last-updated').textContent = formatDateFull(latestTime);
+  document.getElementById('snapshot-count').textContent = snapshotCount;
+  document.getElementById('total-articles').textContent = totalArticles;
+
+  // Current lineup
+  const currentBody = document.getElementById('current-body');
+  currentBody.innerHTML = currentData.map(r => `
+    <tr>
+      <td><span class="slot-badge slot-${r.slot}">${r.slot}</span></td>
+      <td>
+        <div class="article-title">${r.article}</div>
+      </td>
+      <td class="section-cell">${extractSection(r.hyperlink)}</td>
+      <td class="time-pub">${formatDateFromHyperlink(r.hyperlink)}</td>
+      <td class="time-duration">${formatDuration(r.timeInSlot) || '—'}</td>
+      <td class="time-duration highlight">${formatDuration(r.timeInLineup) || '—'}</td>
+    </tr>
+  `).join('');
+
+  // Past stories
+  document.getElementById('past-count').textContent = `${pastData.length} articles`;
+  const pastBody = document.getElementById('past-body');
+  pastBody.innerHTML = pastData.map(r => {
+    let slotCells = '';
+    for (let s = 1; s <= 7; s++) {
+      const val = r.slotTimes[s] ? formatDuration(r.slotTimes[s]) : '—';
+      const cls = r.slotTimes[s] ? 'past-slot-time' : 'past-slot-time empty';
+      slotCells += `<td class="${cls}">${val}</td>`;
+    }
+    return `
+      <tr>
+        <td><span class="past-article-title">${r.article}</span></td>
+        <td class="section-cell">${extractSection(r.hyperlink)}</td>
+        <td class="past-time-pub">${formatDateFromHyperlink(r.hyperlink)}</td>
+        ${slotCells}
+        <td class="past-total">${formatDuration(r.totalTime) || '—'}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', render);
+</script>
+</body>
+</html>
