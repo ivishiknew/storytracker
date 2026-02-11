@@ -249,6 +249,61 @@
     animation: fadeUp 0.5s ease 0.15s both;
   }
 
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--warm-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .filter-chip {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .filter-chip:hover {
+    border-color: var(--warm-gray);
+    color: var(--ink);
+  }
+
+  .filter-chip.active {
+    background: var(--ink);
+    color: var(--white);
+    border-color: var(--ink);
+  }
+
+  .filter-chip .chip-count {
+    font-size: 10px;
+    font-weight: 400;
+    opacity: 0.6;
+    margin-left: 4px;
+  }
+
   .past-table {
     width: 100%;
     border-collapse: collapse;
@@ -390,6 +445,10 @@
     <div class="section-header">
       <h2>Past stories</h2>
       <span class="section-count" id="past-count"></span>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">Filter by section:</span>
+      <div class="filter-chips" id="filter-chips"></div>
     </div>
     <table class="past-table">
       <thead>
@@ -596,6 +655,67 @@ function computeTables(rows) {
 }
 
 // ─── RENDER ───
+let allPastData = [];
+let activeFilter = 'All';
+
+function renderPastTable(data) {
+  const pastBody = document.getElementById('past-body');
+  pastBody.innerHTML = data.map(r => {
+    let slotCells = '';
+    for (let s = 1; s <= 7; s++) {
+      const val = r.slotTimes[s] ? formatDuration(r.slotTimes[s]) : '—';
+      const cls = r.slotTimes[s] ? 'past-slot-time' : 'past-slot-time empty';
+      slotCells += `<td class="${cls}">${val}</td>`;
+    }
+    return `
+      <tr>
+        <td><span class="past-article-title">${r.article}</span></td>
+        <td class="section-cell">${extractSection(r.hyperlink)}</td>
+        <td class="past-time-pub">${formatDateFromHyperlink(r.hyperlink)}</td>
+        ${slotCells}
+        <td class="past-total">${formatDuration(r.totalTime) || '—'}</td>
+      </tr>
+    `;
+  }).join('');
+
+  const countLabel = activeFilter === 'All'
+    ? `${data.length} articles`
+    : `${data.length} of ${allPastData.length} articles`;
+  document.getElementById('past-count').textContent = countLabel;
+}
+
+function buildFilterChips() {
+  // Extract unique sections and count
+  const sectionCounts = {};
+  for (const r of allPastData) {
+    const section = extractSection(r.hyperlink);
+    sectionCounts[section] = (sectionCounts[section] || 0) + 1;
+  }
+  const sections = Object.keys(sectionCounts).sort();
+
+  const container = document.getElementById('filter-chips');
+  // "All" chip
+  let html = `<button class="filter-chip active" data-section="All">All<span class="chip-count">${allPastData.length}</span></button>`;
+  for (const s of sections) {
+    html += `<button class="filter-chip" data-section="${s}">${s}<span class="chip-count">${sectionCounts[s]}</span></button>`;
+  }
+  container.innerHTML = html;
+
+  // Click handlers
+  container.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      container.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeFilter = chip.dataset.section;
+
+      const filtered = activeFilter === 'All'
+        ? allPastData
+        : allPastData.filter(r => extractSection(r.hyperlink) === activeFilter);
+      renderPastTable(filtered);
+    });
+  });
+}
+
 function render() {
   const rows = parseCSV(CSV_DATA);
   const { currentData, pastData, latestTime, snapshotCount, totalArticles } = computeTables(rows);
@@ -620,25 +740,9 @@ function render() {
   `).join('');
 
   // Past stories
-  document.getElementById('past-count').textContent = `${pastData.length} articles`;
-  const pastBody = document.getElementById('past-body');
-  pastBody.innerHTML = pastData.map(r => {
-    let slotCells = '';
-    for (let s = 1; s <= 7; s++) {
-      const val = r.slotTimes[s] ? formatDuration(r.slotTimes[s]) : '—';
-      const cls = r.slotTimes[s] ? 'past-slot-time' : 'past-slot-time empty';
-      slotCells += `<td class="${cls}">${val}</td>`;
-    }
-    return `
-      <tr>
-        <td><span class="past-article-title">${r.article}</span></td>
-        <td class="section-cell">${extractSection(r.hyperlink)}</td>
-        <td class="past-time-pub">${formatDateFromHyperlink(r.hyperlink)}</td>
-        ${slotCells}
-        <td class="past-total">${formatDuration(r.totalTime) || '—'}</td>
-      </tr>
-    `;
-  }).join('');
+  allPastData = pastData;
+  buildFilterChips();
+  renderPastTable(pastData);
 }
 
 document.addEventListener('DOMContentLoaded', render);
