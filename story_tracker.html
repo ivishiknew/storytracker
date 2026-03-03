@@ -914,8 +914,8 @@
                   <th class="sortable" data-sort-key="section" style="width:130px">Section</th>
                   <th class="sortable" data-sort-key="published" style="width:120px">Published</th>
                   <th class="sortable desc" data-sort-key="firstSeen" style="width:130px">Date on hometab</th>
-                  <!-- slot columns inserted dynamically -->
                   <th class="sortable" data-sort-key="totalTime" style="width:95px">Total time in line-up</th>
+                  <!-- slot columns inserted dynamically -->
                 </tr>
               </thead>
               <tbody id="past-body"></tbody>
@@ -1644,8 +1644,8 @@ function renderPastTable(data) {
         <td class="section-cell">${extractSection(r.url)}</td>
         <td class="past-time-pub">${extractPubDate(r.url)}</td>
         <td class="past-time-pub">${formatDateOnly(r.firstSeen)}</td>
-        ${slotCells}
         <td class="past-total">${formatDuration(r.totalTime) || '—'}</td>
+        ${slotCells}
       </tr>
     `;
   }).join('');
