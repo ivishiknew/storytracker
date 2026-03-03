@@ -1954,6 +1954,7 @@ function renderTrackerExtras() {
     const t = String(r.content_type || '').toUpperCase();
     const s = String(r.section_name || '').toLowerCase();
     if (t !== 'ARTICLE' || s === 'podcast' || s === 'podcasts') return false;
+    if (['in brief', 'letters', 'the world this week', 'economic & financial indicators'].includes(s)) return false;
     if (new Date(r.published_date).getTime() < tenDaysAgo) return false;
     const dedupKey = String(r.url || r.content_teg_id || r.headline || '').trim();
     if (!dedupKey || seen.has(dedupKey)) return false;
