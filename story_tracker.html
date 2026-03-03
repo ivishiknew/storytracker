@@ -230,7 +230,7 @@
 
   /* === CURRENT LINEUP TABLE === */
   .current-table-wrap {
-    margin-bottom: 56px;
+    margin-bottom: 16px;
     animation: fadeUp 0.5s ease both;
   }
   @keyframes fadeUp {
@@ -784,6 +784,13 @@
   ::-webkit-scrollbar { height: 6px; }
   ::-webkit-scrollbar-track { background: var(--sand); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── Tracker extra tables ────────────────────── */
+  .tracker-extras-wrap { display: block; padding: 24px; }
+  .extras-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .extras-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); font-size: 11.5px; font-weight: 600; color: var(--warm-gray); text-transform: uppercase; letter-spacing: 0.05em; }
+  .extras-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .extras-cell-muted { font-size: 12px; color: var(--ink-light); white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -803,14 +810,72 @@
   </div>
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="tracker">Hometab line up</button>
-    <button class="tab-btn" data-tab="chronicle">Content archive</button>
+    <button class="tab-btn" data-tab="chronicle">Published stories</button>
 
     <button class="tab-btn" data-tab="appdate">Appdate</button>
+    <button class="tab-btn" data-tab="aisummaries">AI summaries</button>
+    <button class="tab-btn" data-tab="analytics">Analytics</button>
   </div>
 </header>
 
 <!-- ═══════════════ TAB 1: STORY TRACKER ═══════════════ -->
 <div id="tab-tracker" class="tab-content active">
+
+  <!-- CURRENT LINE-UP: full width above the sidebar -->
+  <div class="container" style="padding-bottom:16px;">
+    <div class="current-table-wrap">
+      <div class="section-header">
+        <h2>Current line-up</h2>
+        <span class="section-count" id="current-slot-count"></span>
+      </div>
+      <table class="current-table">
+        <thead>
+          <tr>
+            <th style="width:90px">Position</th>
+            <th>Article</th>
+            <th style="width:100px">Section</th>
+            <th style="width:130px">Published</th>
+            <th style="width:90px">Time in slot</th>
+            <th style="width:100px">Time in line-up</th>
+            <th style="width:80px">Total views</th>
+            <th style="width:85px">Avg views/hr</th>
+            <th style="width:75px"><span class="th-with-tooltip">vs Bench<span class="th-tooltip">Performance relative to position within collection</span></span></th>
+          </tr>
+        </thead>
+        <tbody id="current-body"></tbody>
+      </table>
+      <div style="font-size:11px;color:var(--warm-gray);margin-top:8px;">
+        <span style="color:#1E6B3A;font-weight:600;">Green</span> = performed above position benchmark &middot;
+        <span style="color:#E3120B;font-weight:600;">Red</span> = performed below position benchmark &middot;
+        Uncoloured = no traffic data available
+      </div>
+    </div>
+  </div>
+
+  <!-- PUBLISHED STORIES YET TO BE PROMOTED -->
+  <div class="container" style="padding-top:0;padding-bottom:16px;">
+    <div class="tracker-extra-panel" style="padding-bottom:8px;">
+      <div class="section-header">
+        <h2>Published stories yet to be promoted</h2>
+        <span class="section-count" id="tracker-unpromoted-count"></span>
+      </div>
+      <p style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;">
+        Articles published in the last 10 days (for a full list, <a id="unpromoted-archive-link" href="#" style="color:var(--warm-gray);">click here</a>).
+      </p>
+      <table class="extras-table">
+        <thead>
+          <tr>
+            <th>Headline</th>
+            <th style="width:130px">Section</th>
+            <th style="width:140px">Published</th>
+          </tr>
+        </thead>
+        <tbody id="tracker-unpromoted-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PREVIOUSLY PROMOTED STORIES: sidebar filter + main table -->
   <div class="tab-layout">
     <aside class="filter-rail">
       <div class="rail-group">
@@ -836,74 +901,75 @@
     </aside>
     <div class="tab-main">
       <div class="container">
-
-    <!-- CURRENT LINE-UP -->
-    <div class="current-table-wrap">
-      <div class="section-header">
-        <h2>Current line-up</h2>
-        <span class="section-count" id="current-slot-count"></span>
-      </div>
-      <table class="current-table">
-        <thead>
-          <tr>
-            <th style="width:90px">Position</th>
-            <th>Article</th>
-            <th style="width:100px">Section</th>
-            <th style="width:130px">Published</th>
-            <th style="width:90px">Time in slot</th>
-            <th style="width:100px">Time in line-up</th>
-            <th style="width:80px">Total views</th>
-            <th style="width:85px">Avg views/hr</th>
-            <th style="width:75px"><span class="th-with-tooltip">vs Bench<span class="th-tooltip">Performance relative to position within collection</span></span></th>
-          </tr>
-        </thead>
-        <tbody id="current-body"></tbody>
-      </table>
-    </div>
-
-    <!-- PAST STORIES -->
-    <div class="past-table-wrap">
-      <div class="section-header">
-        <h2>Past top stories</h2>
-        <span class="section-count" id="past-count"></span>
-      </div>
-      <div class="tracker-insights">
-        <div class="tracker-chart-card">
-          <div id="tracker-chart-count" class="tracker-chart"></div>
-        </div>
-        <div class="tracker-chart-card">
-          <div id="tracker-chart-hours" class="tracker-chart"></div>
-        </div>
-      </div>
-      <div class="past-table-scroll">
-      <table class="past-table">
-        <thead>
-          <tr id="past-header-row">
-            <th class="sortable" data-sort-key="article">Article</th>
-            <th class="sortable" data-sort-key="section" style="width:130px">Section</th>
-            <th class="sortable" data-sort-key="published" style="width:120px">Published</th>
-            <th class="sortable desc" data-sort-key="firstSeen" style="width:130px">Date on hometab</th>
-            <!-- slot columns inserted dynamically -->
-            <th class="sortable" data-sort-key="totalTime" style="width:95px">Total time in line-up</th>
-          </tr>
-        </thead>
-        <tbody id="past-body"></tbody>
-      </table>
-      </div>
-      <div style="font-size:11px;color:var(--warm-gray);margin-top:8px;margin-bottom:8px;">
-        <span style="color:#1E6B3A;font-weight:600;">Green</span> = performed above position benchmark &middot;
-        <span style="color:#E3120B;font-weight:600;">Red</span> = performed below position benchmark &middot;
-        Uncoloured = no traffic data available
-      </div>
-      <div class="past-pagination">
-        <div class="past-pagination-meta" id="past-pagination-meta"></div>
-        <div class="past-pagination-controls">
-          <button type="button" class="past-page-btn" id="past-prev-btn">Previous</button>
-          <span class="past-page-label" id="past-page-label"></span>
-          <button type="button" class="past-page-btn" id="past-next-btn">Next</button>
+        <div class="past-table-wrap">
+          <div class="section-header">
+            <h2>Previously promoted stories</h2>
+            <span class="section-count" id="past-count"></span>
+          </div>
+          <div class="past-table-scroll">
+            <table class="past-table">
+              <thead>
+                <tr id="past-header-row">
+                  <th class="sortable" data-sort-key="article">Article</th>
+                  <th class="sortable" data-sort-key="section" style="width:130px">Section</th>
+                  <th class="sortable" data-sort-key="published" style="width:120px">Published</th>
+                  <th class="sortable desc" data-sort-key="firstSeen" style="width:130px">Date on hometab</th>
+                  <!-- slot columns inserted dynamically -->
+                  <th class="sortable" data-sort-key="totalTime" style="width:95px">Total time in line-up</th>
+                </tr>
+              </thead>
+              <tbody id="past-body"></tbody>
+            </table>
+          </div>
+          <div class="past-pagination">
+            <div class="past-pagination-meta" id="past-pagination-meta"></div>
+            <div class="past-pagination-controls">
+              <button type="button" class="past-page-btn" id="past-prev-btn">Previous</button>
+              <span class="past-page-label" id="past-page-label"></span>
+              <button type="button" class="past-page-btn" id="past-next-btn">Next</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+
+
+</div>
+
+<!-- ═══════════════ TAB 5: AI SUMMARIES ═══════════════ -->
+<div id="tab-aisummaries" class="tab-content">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:6px;padding-top:24px;">
+      <h2>Stories missing AI summaries</h2>
+      <span class="section-count" id="aisummaries-count"></span>
+    </div>
+    <p style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;">
+      Articles published in the last 10 days (for a full list, <a id="aisummaries-archive-link" href="#" style="color:var(--ink);border-bottom:1px solid var(--border);text-decoration:none;">click here</a>).
+    </p>
+    <table class="extras-table">
+      <thead>
+        <tr>
+          <th>Headline</th>
+          <th style="width:130px">Section</th>
+          <th style="width:140px">Published</th>
+          <th style="width:200px">Email editor</th>
+        </tr>
+      </thead>
+      <tbody id="aisummaries-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ TAB 6: ANALYTICS ═══════════════ -->
+<div id="tab-analytics" class="tab-content">
+  <div class="container" style="padding-top:24px;">
+    <div class="tracker-insights">
+      <div class="tracker-chart-card">
+        <div id="tracker-chart-count" class="tracker-chart"></div>
+      </div>
+      <div class="tracker-chart-card">
+        <div id="tracker-chart-hours" class="tracker-chart"></div>
       </div>
     </div>
   </div>
@@ -951,7 +1017,7 @@
     <div class="tab-main">
       <div class="container">
         <div class="section-header" style="margin-bottom:22px">
-          <h2>Content archive</h2>
+          <h2>Published stories</h2>
           <span class="section-count">
             Generated: <span id="chron-generated-at"></span> &middot;
             <span id="chron-total-count"></span> rows &middot;
@@ -967,7 +1033,6 @@
                 <th style="width:120px" data-chron-sort="section">Section</th>
                 <th style="width:130px" data-chron-sort="published" class="chron-desc">Published</th>
                 <th style="width:80px" data-chron-sort="format">Format</th>
-                <th style="width:90px" data-chron-sort="publish_mode">Print/Digital</th>
                 <th style="width:120px" data-chron-sort="usage_status">Hometab status</th>
                 <th style="width:125px" data-chron-sort="first_seen">First on hometab</th>
                 <th style="width:90px" data-chron-sort="has_summary">AI Summary</th>
@@ -1171,9 +1236,11 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     // Build appdate tab on first visit
     if (btn.dataset.tab === 'appdate') {
       buildAppdateTab();
+    } else if (btn.dataset.tab === 'aisummaries') {
+      buildAiSummariesTab();
     }
-    // Resize plotly charts when chart tabs are shown
-    if (btn.dataset.tab === 'tracker') {
+    // Resize plotly charts when analytics tab is shown
+    if (btn.dataset.tab === 'analytics') {
       ['tracker-chart-count', 'tracker-chart-hours'].forEach(id => {
         const el = document.getElementById(id);
         if (el && el.data) Plotly.Plots.resize(el);
@@ -1875,6 +1942,58 @@ function renderTrackerTab() {
   if (promotedToEl) promotedToEl.disabled = true;
   buildSectionFilterChips();
   renderPastTable(getVisiblePastData());
+  renderTrackerExtras();
+}
+
+function renderTrackerExtras() {
+  const usageMap = buildHometabUsageMap();
+  const tenDaysAgo = Date.now() - 10 * 24 * 60 * 60 * 1000;
+
+  const seen = new Set();
+  const recentArticles = (CONTENT_DATA || []).filter(r => {
+    const t = String(r.content_type || '').toUpperCase();
+    const s = String(r.section_name || '').toLowerCase();
+    if (t !== 'ARTICLE' || s === 'podcast' || s === 'podcasts') return false;
+    if (new Date(r.published_date).getTime() < tenDaysAgo) return false;
+    const dedupKey = String(r.url || r.content_teg_id || r.headline || '').trim();
+    if (!dedupKey || seen.has(dedupKey)) return false;
+    seen.add(dedupKey);
+    return true;
+  }).map(r => {
+    const keys = [String(r.content_teg_id || '').trim(), String(r.content_id || '').trim()].filter(Boolean);
+    const used_any = keys.some(k => !!usageMap[k]);
+    return { ...r, used_any };
+  });
+
+  const unpromoted = recentArticles
+    .filter(r => !r.used_any)
+    .sort((a, b) => String(b.published_date).localeCompare(String(a.published_date)));
+
+  renderExtrasTable('tracker-unpromoted-body', unpromoted);
+  document.getElementById('tracker-unpromoted-count').textContent = `${unpromoted.length} articles`;
+
+  document.getElementById('unpromoted-archive-link').addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelector('.tab-btn[data-tab="chronicle"]').classList.add('active');
+    document.getElementById('tab-chronicle').classList.add('active');
+  });
+}
+
+function renderExtrasTable(bodyId, rows) {
+  const body = document.getElementById(bodyId);
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="3" style="padding:16px;color:var(--warm-gray);text-align:center;">None in the last 10 days</td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.url ? `<a class="chron-headline-cell" href="${chronSafeUrl(r.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.headline || '—')}</a>` : escapeHtml(r.headline || '—')}</td>
+      <td class="extras-cell-muted">${escapeHtml(r.section_name || extractSection(r.url) || '—')}</td>
+      <td class="extras-cell-muted">${chronFormatDateTime(r.published_date)}</td>
+    </tr>
+  `).join('');
 }
 
 
@@ -2141,12 +2260,10 @@ function renderChronTable(rows) {
     <tr>
       <td>
         ${r.url ? `<a class="chron-headline-cell" href="${chronSafeUrl(r.url)}" target="_blank" rel="noopener noreferrer" title="${r.headline || ''}">${r.headline || '—'}</a>` : `<span class="chron-headline-cell" title="${r.headline || ''}">${r.headline || '—'}</span>`}
-        <span class="chron-sub-meta">${r.fly || ''}${r.rubric ? ` · ${r.rubric}` : ''}</span>
       </td>
       <td class="chron-muted">${r.section_norm || '—'}</td>
       <td class="chron-muted">${chronFormatDateTime(r.published_date)}</td>
       <td>${chronFormatLabel(r.content_type_norm) || '—'}</td>
-      <td class="chron-muted">${r.publish_mode}</td>
       <td class="chron-muted">${r.usage_status}</td>
       <td class="chron-muted">${r.usage_first_seen ? chronFormatDateTime(r.usage_first_seen) : '—'}</td>
       <td class="chron-muted">${r.has_summary ? 'Yes' : 'No'}</td>
@@ -2275,6 +2392,86 @@ function buildChronicleTab() {
     toEl.value = '';
     refreshChronUI();
   });
+}
+
+// ═══════════════════════════════════════════════════════
+//  AI SUMMARIES TAB
+// ═══════════════════════════════════════════════════════
+let aiSummariesBuilt = false;
+
+function getSectionEmail(section) {
+  const map = {
+    'China': 'china_editor@economist',
+    'Britain': 'britain_editor@economist',
+    'Europe': 'europe_editor@economist',
+    'United States': 'us_editor@economist',
+    'Asia': 'asia_editor@economist',
+    'International': 'international_editor@economist',
+    'Middle East & Africa': 'mideast_editor@economist',
+    'The Americas': 'americas_editor@economist',
+    'Finance & economics': 'finance_editor@economist',
+    'Business': 'business_editor@economist',
+    'Science & technology': 'science_editor@economist',
+    'Culture': 'culture_editor@economist',
+    'Leaders': 'leaders_editor@economist',
+    'Briefing': 'briefing_editor@economist',
+    'Special report': 'special_editor@economist',
+    'Obituary': 'obituary_editor@economist',
+  };
+  if (!section) return 'editor@economist';
+  return map[section] || `${section.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '')}_editor@economist`;
+}
+
+function buildAiSummariesTab() {
+  if (aiSummariesBuilt) return;
+  aiSummariesBuilt = true;
+
+  const usageMap = buildHometabUsageMap();
+  const tenDaysAgo = Date.now() - 10 * 24 * 60 * 60 * 1000;
+  const seen = new Set();
+
+  const EXCLUDED_SECTIONS = new Set(['Leaders', 'By Invitation', 'Graphic Detail', 'Graphic detail', 'Obituary', 'Letters', 'The world this week', '1843', 'In brief']);
+
+  const noSummary = (CONTENT_DATA || []).filter(r => {
+    const t = String(r.content_type || '').toUpperCase();
+    const sRaw = String(r.section_name || '');
+    const s = sRaw.toLowerCase();
+    if (t !== 'ARTICLE' || s === 'podcast' || s === 'podcasts') return false;
+    if (EXCLUDED_SECTIONS.has(sRaw)) return false;
+    if (new Date(r.published_date).getTime() < tenDaysAgo) return false;
+    const dedupKey = String(r.url || r.content_teg_id || r.headline || '').trim();
+    if (!dedupKey || seen.has(dedupKey)) return false;
+    seen.add(dedupKey);
+    return !r.has_summary;
+  }).sort((a, b) => String(b.published_date).localeCompare(String(a.published_date)));
+
+  document.getElementById('aisummaries-count').textContent = `${noSummary.length} articles`;
+
+  document.getElementById('aisummaries-archive-link').addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelector('.tab-btn[data-tab="chronicle"]').classList.add('active');
+    document.getElementById('tab-chronicle').classList.add('active');
+  });
+
+  const body = document.getElementById('aisummaries-body');
+  if (!noSummary.length) {
+    body.innerHTML = `<tr><td colspan="4" style="padding:16px;color:var(--warm-gray);text-align:center;">None in the last 10 days</td></tr>`;
+    return;
+  }
+  body.innerHTML = noSummary.map(r => {
+    const section = r.section_name || extractSection(r.url) || '—';
+    const email = getSectionEmail(r.section_name || extractSection(r.url));
+    return `
+      <tr>
+        <td>${r.url ? `<a class="chron-headline-cell" href="${chronSafeUrl(r.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.headline || '—')}</a>` : escapeHtml(r.headline || '—')}</td>
+        <td class="extras-cell-muted">${escapeHtml(section)}</td>
+        <td class="extras-cell-muted">${chronFormatDateTime(r.published_date)}</td>
+        <td class="extras-cell-muted">${escapeHtml(email)}</td>
+      </tr>
+    `;
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════════
